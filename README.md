@@ -33,7 +33,7 @@ cd Haust-testnet
 pip install -r requirements.txt
 ```
 3. **Config:**
-- Open the `bot.py` file and make sure to replace `private_key` with your valid private key.:
+- Open the `pvkey.txt` file and make sure to replace `private_key` with your valid private key.:
 ```sh
 nano pvkey.txt
 ```
