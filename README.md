@@ -5,14 +5,14 @@ Faucet: [HAUST](https://faucet.haust.app/)
 
 *Allow multi-threading to mint NFTs faster.
 
-*Support multiple Wallets and Private Keys
-*Automatically send transactions from multiple addresses
-*Monitor and update nonce for each private key to avoid conflicts when sending transactions.
-*Catch exceptions when transactions fail and handle errors related to nonce (e.g. nonce is too low).
-*Provide language options (Vietnamese or English) for users.
-*Display transaction status notifications (successful or failed) along with detailed information.
-*Calculate and display completion time of all transactions.
-*Make all transactions, notifications, etc. pretty and easy to see.
+- Support multiple Wallets and Private Keys
+- Automatically send transactions from multiple addresses
+- Monitor and update nonce for each private key to avoid conflicts when sending transactions.
+- Catch exceptions when transactions fail and handle errors related to nonce (e.g. nonce is too low).
+- Provide language options (Vietnamese or English) for users.
+- Display transaction status notifications (successful or failed) along with detailed information.
+- Calculate and display completion time of all transactions.
+- Make all transactions, notifications, etc. pretty and easy to see.
 
 ## Module:
 
@@ -25,7 +25,7 @@ Faucet: [HAUST](https://faucet.haust.app/)
 ```sh
 git clone https://github.com/thog9/Haust-testnet.git
 ```
-``sh
+```sh
 cd Haust-testnet
 ```
 2. **Install Module:**
