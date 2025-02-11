@@ -3,10 +3,9 @@ Faucet: [HAUST](https://faucet.haust.app/)
 
 ## Features:
 
-*Allow multi-threading to mint NFTs faster.
-
-- Support multiple Wallets and Private Keys
-- Automatically send transactions from multiple addresses
+- Allow multi-threading to mint NFTs faster.
+- Support multiple Wallets and Private Keys.
+- Automatically send transactions from multiple addresses.
 - Monitor and update nonce for each private key to avoid conflicts when sending transactions.
 - Catch exceptions when transactions fail and handle errors related to nonce (e.g. nonce is too low).
 - Provide language options (Vietnamese or English) for users.
@@ -36,7 +35,7 @@ pip install -r requirements.txt
 3. **Config:**
 - Open the `bot.py` file and make sure to replace `private_key` with your valid private key.:
 ```sh
-nano key.txt
+nano pvkey.txt
 ```
 4. **Run:**
 - Open cmd or Shell, then run command:
