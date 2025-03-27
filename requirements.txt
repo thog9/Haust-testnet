@@ -1,3 +1,5 @@
-web3
-colorama
+web3.py
 eth-account
+colorama
+solcx
+asyncio
