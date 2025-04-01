@@ -77,4 +77,4 @@ python main.py
 - **Telegram**: [thog099](https://t.me/thog099)
 - **Channel**: [CHANNEL](https://t.me/thogairdrops)
 - **Group**: [GROUP CHAT](https://t.me/thogchats)
-- **Replit**: Thog
+- **X**: [Thog](https://x.com/thog099) 
