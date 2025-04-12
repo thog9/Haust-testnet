@@ -71,6 +71,10 @@ async def run_sendtoken(language: str):
     from scripts.sendtoken import run_sendtoken as sendtoken_run
     await sendtoken_run(language)
 
+async def run_nftcollection(language: str):
+    from scripts.nftcollection import run as nftcollection_run
+    await nftcollection_run(language)
+
 async def cmd_exit(language: str):
     print_border(f"Exiting...", Fore.GREEN)
     sys.exit(0)
@@ -83,6 +87,7 @@ SCRIPT_MAP = {
     "mintlabkit": run_mintlabkit,
     "deploytoken": run_deploytoken,
     "sendtoken": run_sendtoken,
+    "nftcollection": run_nftcollection,
     "exit": cmd_exit
 }
 
@@ -95,7 +100,8 @@ def get_available_scripts(language):
             {"name": "4. Mint NFT - Lab Kit NFT | Haust Testnet", "value": "mintlabkit"},
             {"name": "5. Deploy Token smart-contract | Haust Testnet", "value": "deploytoken"},
             {"name": "6. Gửi Token ERC20 ngẫu nhiên hoặc File (addressERC20.txt) | Haust Testnet", "value": "sendtoken"},
-            {"name": "7. Thoát", "value": "exit"},
+            {"name": "7. Deploy NFT - Quản lí NFT [ Tạo | Đúc | Đốt ] | Haust Testnet", "value": "nftcollection"},
+            {"name": "8. Thoát", "value": "exit"},
         ],
         'en': [
             {"name": "1. Send Random TX or File (address.txt) | Haust Testnet", "value": "sendtx"},
@@ -104,7 +110,8 @@ def get_available_scripts(language):
             {"name": "4. Mint NFT - Lab Kit NFT | Haust Testnet", "value": "mintlabkit"},
             {"name": "5. Deploy Token smart-contract | Haust Testnet", "value": "deploytoken"},
             {"name": "6. Send ERC20 Token Random or File (addressERC20.txt) | Haust Testnet", "value": "sendtoken"},
-            {"name": "7. Thoát", "value": "exit"},
+            {"name": "7. Deploy NFT - Manage NFT Collection [ Create | Mint | Burn ] | Haust Testnet", "value": "nftcollection"},
+            {"name": "8. Thoát", "value": "exit"},
         ]
     }
     return scripts[language]
