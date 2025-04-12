@@ -10,12 +10,11 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 # Constants
-NETWORK_URLS = ['https://rpc-testnet.haust.app']
-CHAIN_ID = 1523903251
-EXPLORER_URL = "https://explorer-testnet.haust.app"
-BORDER_WIDTH = 80
+NETWORK_URLS = ['https://node-2.seismicdev.net/rpc']
+CHAIN_ID = 5124
+EXPLORER_URL = "https://explorer-2.seismicdev.net"
 
-# ABI của CustomToken.sol
+# ABI của CustomToken.sol (khớp với hợp đồng trong deploytoken.py)
 CONTRACT_ABI = [
     {
         "inputs": [
@@ -145,17 +144,17 @@ CONTRACT_ABI = [
 # Từ vựng song ngữ
 LANG = {
     'vi': {
-        'title': 'SEND TOKEN ERC20 - HAUST TESTNET',
+        'title': 'SEND TOKEN ERC20 - SEISMIC TESTNET',
         'info': 'Thông tin',
         'found': 'Tìm thấy',
         'wallets': 'ví',
         'processing_wallet': 'XỬ LÝ VÍ',
-        'enter_contract': 'Nhập địa chỉ hợp đồng ERC20 (contractERC20.txt): ',
-        'enter_amount': 'Nhập số lượng token gửi: ',
+        'enter_contract': 'Nhập địa chỉ hợp đồng ERC20 (contractERC20.txt):',
+        'enter_amount': 'Nhập số lượng token gửi:',
         'choose_destination': 'Chọn phương thức gửi token:',
         'option_random': '1. Gửi ngẫu nhiên',
         'option_file': '2. Gửi từ file addressERC20.txt',
-        'input_prompt': 'Nhập lựa chọn của bạn (1 hoặc 2): ',
+        'input_prompt': 'Nhập lựa chọn của bạn (1 hoặc 2):',
         'invalid_choice': 'Lựa chọn không hợp lệ',
         'no_addresses': 'Không tìm thấy địa chỉ trong addressERC20.txt',
         'preparing_tx': 'Chuẩn bị giao dịch...',
@@ -169,7 +168,7 @@ LANG = {
         'block': 'Khối',
         'error': 'Lỗi',
         'invalid_number': 'Vui lòng nhập số hợp lệ',
-        'connect_success': 'Thành công: Đã kết nối mạng HAUST Testnet',
+        'connect_success': 'Thành công: Đã kết nối mạng Seismic Testnet',
         'connect_error': 'Không thể kết nối RPC',
         'web3_error': 'Kết nối Web3 thất bại',
         'pvkey_not_found': 'File pvkey.txt không tồn tại',
@@ -180,17 +179,17 @@ LANG = {
         'completed': 'HOÀN THÀNH: {successful}/{total} GIAO DỊCH THÀNH CÔNG'
     },
     'en': {
-        'title': 'SEND ERC20 TOKEN - HAUST TESTNET',
+        'title': 'SEND TOKEN ERC20 - SEISMIC TESTNET',
         'info': 'Info',
         'found': 'Found',
         'wallets': 'wallets',
         'processing_wallet': 'PROCESSING WALLET',
-        'enter_contract': 'Enter ERC20 contract address (contractERC20.txt): ',
-        'enter_amount': 'Enter token amount to send: ',
+        'enter_contract': 'Enter ERC20 contract address (contractERC20.txt):',
+        'enter_amount': 'Enter token amount to send:',
         'choose_destination': 'Choose token sending method:',
         'option_random': '1. Send randomly',
         'option_file': '2. Send from addressERC20.txt',
-        'input_prompt': 'Enter your choice (1 or 2): ',
+        'input_prompt': 'Enter your choice (1 or 2):',
         'invalid_choice': 'Invalid choice',
         'no_addresses': 'No addresses found in addressERC20.txt',
         'preparing_tx': 'Preparing transaction...',
@@ -204,7 +203,7 @@ LANG = {
         'block': 'Block',
         'error': 'Error',
         'invalid_number': 'Please enter a valid number',
-        'connect_success': 'Success: Connected to HAUST Testnet',
+        'connect_success': 'Success: Connected to Seismic Testnet',
         'connect_error': 'Failed to connect to RPC',
         'web3_error': 'Web3 connection failed',
         'pvkey_not_found': 'pvkey.txt file not found',
@@ -217,7 +216,7 @@ LANG = {
 }
 
 # Hàm hiển thị viền đẹp mắt
-def print_border(text: str, color=Fore.CYAN, width=BORDER_WIDTH):
+def print_border(text: str, color=Fore.CYAN, width=80):
     text = text.strip()
     if len(text) > width - 4:
         text = text[:width - 7] + "..."
@@ -228,7 +227,7 @@ def print_border(text: str, color=Fore.CYAN, width=BORDER_WIDTH):
 
 # Hàm hiển thị phân cách
 def print_separator(color=Fore.MAGENTA):
-    print(f"{color}{'═' * BORDER_WIDTH}{Style.RESET_ALL}")
+    print(f"{color}{'═' * 80}{Style.RESET_ALL}")
 
 # Hàm kiểm tra private key hợp lệ
 def is_valid_private_key(key: str) -> bool:
@@ -296,18 +295,39 @@ def load_addresses(file_path: str = "addressERC20.txt", language: str = 'en') ->
 
 # Hàm kết nối Web3
 def connect_web3(language: str = 'en'):
+    # Thử kết nối với các RPC mặc định
     for url in NETWORK_URLS:
         try:
             w3 = Web3(Web3.HTTPProvider(url))
             if w3.is_connected():
-                print(f"{Fore.GREEN}  ✔ {LANG[language]['connect_success']} │ Chain ID: {w3.eth.chain_id} │ RPC: {url}{Style.RESET_ALL}")
+                print(f"{Fore.GREEN}  ✔ {LANG[language]['connect_success']} | Chain ID: {w3.eth.chain_id} | RPC: {url}{Style.RESET_ALL}")
                 return w3
             else:
                 print(f"{Fore.YELLOW}  ⚠ {LANG[language]['connect_error']} at {url}{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.YELLOW}  ⚠ {LANG[language]['web3_error']} at {url}: {str(e)}{Style.RESET_ALL}")
-    print(f"{Fore.RED}  ✖ Failed to connect to any RPC endpoint{Style.RESET_ALL}")
-    sys.exit(1)
+
+    # Nếu không kết nối được, yêu cầu người dùng nhập RPC
+    print(f"{Fore.RED}  ✖ Failed to connect to any default RPC endpoint{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}  ℹ {'Vui lòng lấy RPC từ https://alchemy.com và nhập vào dưới đây' if language == 'vi' else 'Please obtain an RPC from https://alchemy.com and enter it below'}{Style.RESET_ALL}")
+    custom_rpc = input(f"{Fore.YELLOW}  > {'Nhập RPC tùy chỉnh' if language == 'vi' else 'Enter custom RPC'}: {Style.RESET_ALL}").strip()
+
+    if not custom_rpc:
+        print(f"{Fore.RED}  ✖ {'Không có RPC được nhập, thoát chương trình' if language == 'vi' else 'No RPC provided, exiting program'}{Style.RESET_ALL}")
+        sys.exit(1)
+
+    # Thử kết nối với RPC tùy chỉnh
+    try:
+        w3 = Web3(Web3.HTTPProvider(custom_rpc))
+        if w3.is_connected():
+            print(f"{Fore.GREEN}  ✔ {LANG[language]['connect_success']} | Chain ID: {w3.eth.chain_id} | RPC: {custom_rpc}{Style.RESET_ALL}")
+            return w3
+        else:
+            print(f"{Fore.RED}  ✖ {LANG[language]['connect_error']} at {custom_rpc}{Style.RESET_ALL}")
+            sys.exit(1)
+    except Exception as e:
+        print(f"{Fore.RED}  ✖ {LANG[language]['web3_error']} at {custom_rpc}: {str(e)}{Style.RESET_ALL}")
+        sys.exit(1)
 
 # Hàm gửi token ERC20
 async def send_token(w3: Web3, private_key: str, wallet_index: int, contract_address: str, destination: str, amount: float, language: str = 'en'):
@@ -320,32 +340,25 @@ async def send_token(w3: Web3, private_key: str, wallet_index: int, contract_add
         amount_wei = int(amount * 10 ** decimals)
 
         balance = w3.from_wei(w3.eth.get_balance(sender_address), 'ether')
-        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} HAUST{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} ETH{Style.RESET_ALL}")
 
         print(f"{Fore.CYAN}  > {LANG[language]['preparing_tx']}{Style.RESET_ALL}")
         nonce = w3.eth.get_transaction_count(sender_address)
+        gas_price = w3.to_wei('0.1', 'gwei')
 
-        # Lấy gas price động từ mạng
-        gas_price = w3.eth.gas_price
-        min_gas_price = w3.to_wei('10', 'gwei')  # Giá gas tối thiểu 10 gwei
-        gas_price = max(gas_price, min_gas_price)
-        print(f"{Fore.YELLOW}  - Gas Price từ mạng: {w3.from_wei(gas_price, 'gwei'):.2f} gwei{Style.RESET_ALL}")
-
-        # Ước lượng gas
         try:
             estimated_gas = contract.functions.sendToken(Web3.to_checksum_address(destination), amount_wei).estimate_gas({
                 'from': sender_address
             })
-            gas_limit = int(estimated_gas * 1.5)  # Tăng 50% để đảm bảo đủ gas
+            gas_limit = int(estimated_gas * 1.2)
             print(f"{Fore.YELLOW}  - Gas ước lượng: {estimated_gas} | Gas limit sử dụng: {gas_limit}{Style.RESET_ALL}")
         except Exception as e:
-            print(f"{Fore.YELLOW}  ⚠ Không thể ước lượng gas: {str(e)}. Dùng gas mặc định: 300000{Style.RESET_ALL}")
-            gas_limit = 300000  # Gas dự phòng
+            print(f"{Fore.YELLOW}  ⚠ Không thể ước lượng gas: {str(e)}. Dùng gas mặc định: 200000{Style.RESET_ALL}")
+            gas_limit = 200000
 
-        # Kiểm tra số dư đủ cho gas không
         required_balance = w3.from_wei(gas_limit * gas_price, 'ether')
         if balance < required_balance:
-            print(f"{Fore.RED}  ✖ Số dư không đủ cho gas (Cần: {required_balance:.6f} HAUST){Style.RESET_ALL}")
+            print(f"{Fore.RED}  ✖ Insufficient balance for gas (Need: {required_balance:.6f} ETH){Style.RESET_ALL}")
             return False
 
         tx = contract.functions.sendToken(Web3.to_checksum_address(destination), amount_wei).build_transaction({
@@ -392,9 +405,9 @@ async def run_sendtoken(language: str = 'en'):
     print()
 
     # Nhập thông tin giao dịch
-    print(f"{Fore.YELLOW}  ➤ {LANG[language]['enter_contract']}{Style.RESET_ALL}", end="")
+    print(f"{Fore.YELLOW}  ➤ {LANG[language]['enter_contract']} {Style.RESET_ALL}", end="")
     contract_address = input().strip()
-    print(f"{Fore.YELLOW}  ➤ {LANG[language]['enter_amount']}{Style.RESET_ALL}", end="")
+    print(f"{Fore.YELLOW}  ➤ {LANG[language]['enter_amount']} {Style.RESET_ALL}", end="")
     amount_input = input().strip()
 
     try:
@@ -411,7 +424,7 @@ async def run_sendtoken(language: str = 'en'):
     print(f"{Fore.GREEN}    ├─ {LANG[language]['option_random']}{Style.RESET_ALL}")
     print(f"{Fore.GREEN}    └─ {LANG[language]['option_file']}{Style.RESET_ALL}")
     print()
-    print(f"{Fore.YELLOW}  ➤ {LANG[language]['input_prompt']}{Style.RESET_ALL}", end="")
+    print(f"{Fore.YELLOW}  ➤ {LANG[language]['input_prompt']} {Style.RESET_ALL}", end="")
     choice = input().strip()
 
     destinations = []
@@ -454,4 +467,4 @@ async def run_sendtoken(language: str = 'en'):
     print()
 
 if __name__ == "__main__":
-    asyncio.run(run_sendtoken('en'))  # Ngôn ngữ mặc định là Tiếng Anh
+    asyncio.run(run_sendtoken('vi'))  # Ngôn ngữ mặc định là Tiếng Việt

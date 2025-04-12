@@ -12,11 +12,10 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 # Constants
-NETWORK_URLS = ['https://rpc-testnet.haust.app']  # Đổi sang HAUST TESTNET
-CHAIN_ID = 1523903251
-EXPLORER_URL = "https://explorer-testnet.haust.app/tx/0x"
-SOLC_VERSION = "0.8.19"  # Phiên bản Solidity không dùng PUSH0
-BORDER_WIDTH = 80
+NETWORK_URLS = ['https://node-2.seismicdev.net/rpc']
+CHAIN_ID = 5124
+EXPLORER_URL = "https://explorer-2.seismicdev.net"
+SOLC_VERSION = "0.8.19"  # Dùng phiên bản không có PUSH0
 
 # Source code của CustomToken.sol
 CONTRACT_SOURCE = """
@@ -123,15 +122,15 @@ contract CustomToken {
 # Từ vựng song ngữ
 LANG = {
     'vi': {
-        'title': 'DEPLOY TOKEN ERC20 - HAUST TESTNET',
+        'title': 'DEPLOY TOKEN ERC20 - SEISMIC TESTNET',
         'info': 'Thông tin',
         'found': 'Tìm thấy',
         'wallets': 'ví',
         'processing_wallet': 'XỬ LÝ VÍ',
-        'enter_name': 'Nhập tên token (VD: Thog Token): ',
-        'enter_symbol': 'Nhập ký hiệu token (VD: THOG): ',
-        'enter_decimals': 'Nhập số thập phân (mặc định 18): ',
-        'enter_supply': 'Nhập tổng cung (ví dụ: 1000000): ',
+        'enter_name': 'Nhập tên token (VD: Thog Token):',
+        'enter_symbol': 'Nhập ký hiệu token (mặc định THOG):',
+        'enter_decimals': 'Nhập số thập phân (mặc định 18):',
+        'enter_supply': 'Nhập tổng cung (ví dụ: 1000000):',
         'preparing_tx': 'Chuẩn bị giao dịch...',
         'sending_tx': 'Đang gửi giao dịch...',
         'success': 'Triển khai thành công!',
@@ -141,7 +140,7 @@ LANG = {
         'block': 'Khối',
         'error': 'Lỗi',
         'invalid_number': 'Vui lòng nhập số hợp lệ',
-        'connect_success': 'Thành công: Đã kết nối mạng HAUST Testnet',
+        'connect_success': 'Thành công: Đã kết nối mạng Seismic Testnet',
         'connect_error': 'Không thể kết nối RPC',
         'web3_error': 'Kết nối Web3 thất bại',
         'pvkey_not_found': 'File pvkey.txt không tồn tại',
@@ -152,19 +151,19 @@ LANG = {
         'completed': 'HOÀN THÀNH: {successful}/{total} GIAO DỊCH THÀNH CÔNG',
         'installing_solc': 'Đang cài đặt solc phiên bản {version}...',
         'solc_installed': 'Đã cài đặt solc phiên bản {version}',
-        'no_balance': 'Số dư ví không đủ (cần ít nhất {required} HAUST)',
+        'no_balance': 'Số dư ví không đủ (cần ít nhất {required} ETH)',
         'estimating_gas': 'Đang ước lượng gas...'
     },
     'en': {
-        'title': 'DEPLOY ERC20 TOKEN - HAUST TESTNET',
+        'title': 'DEPLOY TOKEN ERC20 - SEISMIC TESTNET',
         'info': 'Info',
         'found': 'Found',
         'wallets': 'wallets',
         'processing_wallet': 'PROCESSING WALLET',
-        'enter_name': 'Enter token name (e.g., Thog Token): ',
-        'enter_symbol': 'Enter token symbol (e.g., THOG): ',
-        'enter_decimals': 'Enter decimals (default 18): ',
-        'enter_supply': 'Enter total supply (e.g., 1000000): ',
+        'enter_name': 'Enter token name (e.g., Thog Token):',
+        'enter_symbol': 'Enter token symbol (default THOG):',
+        'enter_decimals': 'Enter decimals (default 18):',
+        'enter_supply': 'Enter total supply (e.g., 1000000):',
         'preparing_tx': 'Preparing transaction...',
         'sending_tx': 'Sending transaction...',
         'success': 'Deployment successful!',
@@ -174,7 +173,7 @@ LANG = {
         'block': 'Block',
         'error': 'Error',
         'invalid_number': 'Please enter a valid number',
-        'connect_success': 'Success: Connected to HAUST Testnet',
+        'connect_success': 'Success: Connected to Seismic Testnet',
         'connect_error': 'Failed to connect to RPC',
         'web3_error': 'Web3 connection failed',
         'pvkey_not_found': 'pvkey.txt file not found',
@@ -185,13 +184,13 @@ LANG = {
         'completed': 'COMPLETED: {successful}/{total} TRANSACTIONS SUCCESSFUL',
         'installing_solc': 'Installing solc version {version}...',
         'solc_installed': 'Installed solc version {version}',
-        'no_balance': 'Insufficient balance (need at least {required} HAUST)',
+        'no_balance': 'Insufficient balance (need at least {required} ETH)',
         'estimating_gas': 'Estimating gas...'
     }
 }
 
 # Hàm hiển thị viền đẹp mắt
-def print_border(text: str, color=Fore.CYAN, width=BORDER_WIDTH):
+def print_border(text: str, color=Fore.CYAN, width=80):
     text = text.strip()
     if len(text) > width - 4:
         text = text[:width - 7] + "..."
@@ -202,7 +201,7 @@ def print_border(text: str, color=Fore.CYAN, width=BORDER_WIDTH):
 
 # Hàm hiển thị phân cách
 def print_separator(color=Fore.MAGENTA):
-    print(f"{color}{'═' * BORDER_WIDTH}{Style.RESET_ALL}")
+    print(f"{color}{'═' * 80}{Style.RESET_ALL}")
 
 # Hàm kiểm tra private key hợp lệ
 def is_valid_private_key(key: str) -> bool:
@@ -247,6 +246,7 @@ def load_private_keys(file_path: str = "pvkey.txt", language: str = 'en') -> lis
 
 # Hàm kết nối Web3
 def connect_web3(language: str = 'en'):
+    # Thử kết nối với các RPC mặc định
     for url in NETWORK_URLS:
         try:
             w3 = Web3(Web3.HTTPProvider(url))
@@ -257,8 +257,28 @@ def connect_web3(language: str = 'en'):
                 print(f"{Fore.YELLOW}  ⚠ {LANG[language]['connect_error']} at {url}{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.YELLOW}  ⚠ {LANG[language]['web3_error']} at {url}: {str(e)}{Style.RESET_ALL}")
-    print(f"{Fore.RED}  ✖ Failed to connect to any RPC endpoint{Style.RESET_ALL}")
-    sys.exit(1)
+
+    # Nếu không kết nối được, yêu cầu người dùng nhập RPC
+    print(f"{Fore.RED}  ✖ Failed to connect to any default RPC endpoint{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}  ℹ {'Vui lòng lấy RPC từ https://alchemy.com và nhập vào dưới đây' if language == 'vi' else 'Please obtain an RPC from https://alchemy.com and enter it below'}{Style.RESET_ALL}")
+    custom_rpc = input(f"{Fore.YELLOW}  > {'Nhập RPC tùy chỉnh' if language == 'vi' else 'Enter custom RPC'}: {Style.RESET_ALL}").strip()
+
+    if not custom_rpc:
+        print(f"{Fore.RED}  ✖ {'Không có RPC được nhập, thoát chương trình' if language == 'vi' else 'No RPC provided, exiting program'}{Style.RESET_ALL}")
+        sys.exit(1)
+
+    # Thử kết nối với RPC tùy chỉnh
+    try:
+        w3 = Web3(Web3.HTTPProvider(custom_rpc))
+        if w3.is_connected():
+            print(f"{Fore.GREEN}  ✔ {LANG[language]['connect_success']} | Chain ID: {w3.eth.chain_id} | RPC: {custom_rpc}{Style.RESET_ALL}")
+            return w3
+        else:
+            print(f"{Fore.RED}  ✖ {LANG[language]['connect_error']} at {custom_rpc}{Style.RESET_ALL}")
+            sys.exit(1)
+    except Exception as e:
+        print(f"{Fore.RED}  ✖ {LANG[language]['web3_error']} at {custom_rpc}: {str(e)}{Style.RESET_ALL}")
+        sys.exit(1)
 
 # Hàm kiểm tra và cài đặt solc
 def ensure_solc_installed(language: str = 'en'):
@@ -290,18 +310,12 @@ async def deploy_contract(w3: Web3, private_key: str, wallet_index: int, name: s
 
         # Kiểm tra số dư ví
         balance = w3.from_wei(w3.eth.get_balance(sender_address), 'ether')
-        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} HAUST{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} ETH{Style.RESET_ALL}")
 
         # Chuẩn bị giao dịch
         print(f"{Fore.CYAN}  > {LANG[language]['preparing_tx']}{Style.RESET_ALL}")
         nonce = w3.eth.get_transaction_count(sender_address)
-        total_supply_wei = total_supply * 10 ** decimals  # Chuyển đổi sang đơn vị nhỏ nhất
-
-        # Lấy gas price động từ mạng
-        gas_price = w3.eth.gas_price
-        min_gas_price = w3.to_wei('10', 'gwei')  # Giá gas tối thiểu 10 gwei
-        gas_price = max(gas_price, min_gas_price)  # Chọn giá lớn hơn giữa mạng và tối thiểu
-        print(f"{Fore.YELLOW}  - Gas Price từ mạng: {w3.from_wei(gas_price, 'gwei'):.2f} gwei{Style.RESET_ALL}")
+        total_supply_wei = w3.to_wei(total_supply, 'ether')
 
         # Ước lượng gas
         print(f"{Fore.CYAN}  > {LANG[language]['estimating_gas']}{Style.RESET_ALL}")
@@ -309,16 +323,17 @@ async def deploy_contract(w3: Web3, private_key: str, wallet_index: int, name: s
             estimated_gas = contract.constructor(name, symbol, decimals, total_supply_wei).estimate_gas({
                 'from': sender_address
             })
-            gas_limit = int(estimated_gas * 1.5)  # Tăng 50% để đảm bảo đủ gas
+            gas_limit = int(estimated_gas * 1.2)  # Tăng 20% giống ethers.js
             print(f"{Fore.YELLOW}  - Gas ước lượng: {estimated_gas} | Gas limit sử dụng: {gas_limit}{Style.RESET_ALL}")
         except ContractLogicError as e:
             print(f"{Fore.RED}  ✖ Lỗi ước lượng gas: {str(e)} (Contract có thể không hợp lệ){Style.RESET_ALL}")
             return None
         except Exception as e:
-            print(f"{Fore.YELLOW}  ⚠ Không thể ước lượng gas: {str(e)}. Dùng gas mặc định: 5000000{Style.RESET_ALL}")
-            gas_limit = 5000000  # Gas dự phòng
+            print(f"{Fore.YELLOW}  ⚠ Không thể ước lượng gas: {str(e)}. Dùng gas mặc định: 4000000{Style.RESET_ALL}")
+            gas_limit = 4000000  # Gas dự phòng
 
         # Kiểm tra số dư đủ cho gas không
+        gas_price = w3.to_wei('0.1', 'gwei')  # Gas price cố định như ethers.js
         required_balance = w3.from_wei(gas_limit * gas_price, 'ether')
         if balance < required_balance:
             print(f"{Fore.RED}  ✖ {LANG[language]['no_balance'].format(required=required_balance)}{Style.RESET_ALL}")
@@ -336,7 +351,7 @@ async def deploy_contract(w3: Web3, private_key: str, wallet_index: int, name: s
         print(f"{Fore.CYAN}  > {LANG[language]['sending_tx']}{Style.RESET_ALL}")
         signed_tx = w3.eth.account.sign_transaction(tx, private_key)
         tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        tx_link = f"{EXPLORER_URL}{tx_hash.hex()}"
+        tx_link = f"{EXPLORER_URL}/tx/0x{tx_hash.hex()}"
 
         # Đợi receipt
         receipt = await asyncio.get_event_loop().run_in_executor(None, lambda: w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300))
@@ -373,10 +388,10 @@ async def run_deploytoken(language: str = 'en'):
     print()
 
     # Nhập thông tin token
-    name = input(f"{Fore.YELLOW}  > {LANG[language]['enter_name']}{Style.RESET_ALL}").strip()
-    symbol = input(f"{Fore.YELLOW}  > {LANG[language]['enter_symbol']}{Style.RESET_ALL}").strip()
-    decimals_input = input(f"{Fore.YELLOW}  > {LANG[language]['enter_decimals']}{Style.RESET_ALL}").strip() or "18"
-    total_supply_input = input(f"{Fore.YELLOW}  > {LANG[language]['enter_supply']}{Style.RESET_ALL}").strip()
+    name = input(f"{Fore.YELLOW}  > {LANG[language]['enter_name']} {Style.RESET_ALL}").strip()
+    symbol = input(f"{Fore.YELLOW}  > {LANG[language]['enter_symbol']} {Style.RESET_ALL}").strip()
+    decimals_input = input(f"{Fore.YELLOW}  > {LANG[language]['enter_decimals']} {Style.RESET_ALL}").strip() or "18"
+    total_supply_input = input(f"{Fore.YELLOW}  > {LANG[language]['enter_supply']} {Style.RESET_ALL}").strip()
 
     try:
         decimals = int(decimals_input)
@@ -413,4 +428,4 @@ async def run_deploytoken(language: str = 'en'):
     print()
 
 if __name__ == "__main__":
-    asyncio.run(run_deploytoken('en'))
+    asyncio.run(run_deploytoken('vi'))
