@@ -13,14 +13,14 @@ init(autoreset=True)
 BORDER_WIDTH = 80
 
 # Constants
-NETWORK_URLS = ['https://node-2.seismicdev.net/rpc']
-CHAIN_ID = 5124
-EXPLORER_URL = "https://explorer-2.seismicdev.net/tx/0x"
+NETWORK_URLS = ["https://rpc-testnet.haust.app"] 
+CHAIN_ID = 1523903251
+EXPLORER_URL = "https://explorer-testnet.haust.app/tx/0x"
 
 # Từ vựng song ngữ
 LANG = {
     'vi': {
-        'title': '✨ GỬI GIAO DỊCH - SEISMIC TESTNET ✨',
+        'title': '✨ GỬI GIAO DỊCH - HAUST TESTNET ✨',
         'info': 'ℹ Thông tin',
         'found': 'Tìm thấy',
         'wallets': 'ví',
@@ -28,9 +28,9 @@ LANG = {
         'tx_count_prompt': 'Số giao dịch (mặc định 1): ',
         'selected': 'Đã chọn',
         'transactions': 'giao dịch',
-        'enter_amount': '✦ NHẬP SỐ LƯỢNG ETH',
-        'amount_prompt': 'Số lượng ETH (mặc định 0.0001, tối đa 999): ',
-        'amount_unit': 'ETH',
+        'enter_amount': '✦ NHẬP SỐ LƯỢNG HAUST',
+        'amount_prompt': 'Số lượng HAUST (mặc định 0.0001, tối đa 999): ',
+        'amount_unit': 'HAUST',
         'select_tx_type': '✦ CHỌN LOẠI GIAO DỊCH',
         'random_option': '1. Gửi đến địa chỉ ngẫu nhiên',
         'file_option': '2. Gửi đến địa chỉ từ file (address.txt)',
@@ -57,7 +57,7 @@ LANG = {
         'tx_count_error': 'Số giao dịch phải lớn hơn 0',
         'amount_error': 'Số lượng phải lớn hơn 0 và không quá 999',
         'invalid_choice': 'Lựa chọn không hợp lệ',
-        'connect_success': '✅ Thành công: Đã kết nối mạng Seismic Testnet',
+        'connect_success': '✅ Thành công: Đã kết nối mạng Haust Testnet',
         'connect_error': '❌ Không thể kết nối RPC',
         'web3_error': '❌ Kết nối Web3 thất bại',
         'pvkey_not_found': '❌ File pvkey.txt không tồn tại',
@@ -70,7 +70,7 @@ LANG = {
         'warning_line': '⚠ Cảnh báo: Dòng'
     },
     'en': {
-        'title': '✨ SEND TRANSACTION - SEISMIC TESTNET ✨',
+        'title': '✨ SEND TRANSACTION - HAUST TESTNET ✨',
         'info': 'ℹ Info',
         'found': 'Found',
         'wallets': 'wallets',
@@ -78,9 +78,9 @@ LANG = {
         'tx_count_prompt': 'Number of transactions (default 1): ',
         'selected': 'Selected',
         'transactions': 'transactions',
-        'enter_amount': '✦ ENTER AMOUNT OF ETH',
-        'amount_prompt': 'Amount of ETH (default 0.0001, max 999): ',
-        'amount_unit': 'ETH',
+        'enter_amount': '✦ ENTER AMOUNT OF HAUST',
+        'amount_prompt': 'Amount of HAUST (default 0.0001, max 999): ',
+        'amount_unit': 'HAUST',
         'select_tx_type': '✦ SELECT TRANSACTION TYPE',
         'random_option': '1. Send to random address',
         'file_option': '2. Send to addresses from file (address.txt)',
@@ -107,7 +107,7 @@ LANG = {
         'tx_count_error': 'Number of transactions must be greater than 0',
         'amount_error': 'Amount must be greater than 0 and not exceed 999',
         'invalid_choice': 'Invalid choice',
-        'connect_success': '✅ Success: Connected to Seismic Testnet',
+        'connect_success': '✅ Success: Connected to Haust Testnet',
         'connect_error': '❌ Failed to connect to RPC',
         'web3_error': '❌ Web3 connection failed',
         'pvkey_not_found': '❌ pvkey.txt file not found',
@@ -252,7 +252,8 @@ async def send_transaction(w3: Web3, private_key: str, to_address: str, amount: 
 
     try:
         nonce = w3.eth.get_transaction_count(sender_address)
-        gas_price = w3.to_wei('0.1', 'gwei')  # Gas price cố định như các file khác
+        gas_price = w3.eth.gas_price
+        gas_price = int(gas_price * 1.2)
         
         # Ước lượng gas
         try:
@@ -264,13 +265,13 @@ async def send_transaction(w3: Web3, private_key: str, to_address: str, amount: 
             gas_limit = int(estimated_gas * 1.2)  # Tăng 20%
             print(f"{Fore.YELLOW}  - Gas ước lượng: {estimated_gas} | Gas limit sử dụng: {gas_limit}{Style.RESET_ALL}")
         except Exception:
-            gas_limit = 21000  # Gas mặc định 
+            gas_limit = 21000  
             print(f"{Fore.YELLOW}  - Không thể ước lượng gas. Dùng gas mặc định: {gas_limit}{Style.RESET_ALL}")
 
         balance = w3.from_wei(w3.eth.get_balance(sender_address), 'ether')
         required_balance = w3.from_wei(gas_limit * gas_price + w3.to_wei(amount, 'ether'), 'ether')
         if balance < required_balance:
-            print(f"{Fore.RED}  ✖ Số dư không đủ: {balance:.6f} TEA (Cần: {required_balance:.6f} TEA){Style.RESET_ALL}")
+            print(f"{Fore.RED}  ✖ Số dư không đủ: {balance:.6f} HAUST (Cần: {required_balance:.6f} HAUST){Style.RESET_ALL}")
             return False
 
         tx = {
@@ -321,7 +322,7 @@ def get_tx_count(language: str = 'en') -> int:
         except ValueError:
             print(f"{Fore.RED}  ✖ {LANG[language]['error']}: {LANG[language]['invalid_number']}{Style.RESET_ALL}")
 
-# Hàm nhập số lượng TEA
+
 def get_amount(language: str = 'en') -> float:
     print_border(LANG[language]['enter_amount'], Fore.YELLOW)
     while True:

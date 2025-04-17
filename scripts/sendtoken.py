@@ -10,9 +10,9 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 # Constants
-NETWORK_URLS = ['https://node-2.seismicdev.net/rpc']
-CHAIN_ID = 5124
-EXPLORER_URL = "https://explorer-2.seismicdev.net"
+NETWORK_URLS = ["https://rpc-testnet.haust.app"] 
+CHAIN_ID = 1523903251
+EXPLORER_URL = "https://explorer-testnet.haust.app"
 
 # ABI của CustomToken.sol (khớp với hợp đồng trong deploytoken.py)
 CONTRACT_ABI = [
@@ -144,7 +144,7 @@ CONTRACT_ABI = [
 # Từ vựng song ngữ
 LANG = {
     'vi': {
-        'title': 'SEND TOKEN ERC20 - SEISMIC TESTNET',
+        'title': 'SEND TOKEN ERC20 - HAUST TESTNET',
         'info': 'Thông tin',
         'found': 'Tìm thấy',
         'wallets': 'ví',
@@ -168,7 +168,7 @@ LANG = {
         'block': 'Khối',
         'error': 'Lỗi',
         'invalid_number': 'Vui lòng nhập số hợp lệ',
-        'connect_success': 'Thành công: Đã kết nối mạng Seismic Testnet',
+        'connect_success': 'Thành công: Đã kết nối mạng Haust Testnet',
         'connect_error': 'Không thể kết nối RPC',
         'web3_error': 'Kết nối Web3 thất bại',
         'pvkey_not_found': 'File pvkey.txt không tồn tại',
@@ -179,7 +179,7 @@ LANG = {
         'completed': 'HOÀN THÀNH: {successful}/{total} GIAO DỊCH THÀNH CÔNG'
     },
     'en': {
-        'title': 'SEND TOKEN ERC20 - SEISMIC TESTNET',
+        'title': 'SEND ERC20 TOKEN - HAUST TESTNET',
         'info': 'Info',
         'found': 'Found',
         'wallets': 'wallets',
@@ -203,7 +203,7 @@ LANG = {
         'block': 'Block',
         'error': 'Error',
         'invalid_number': 'Please enter a valid number',
-        'connect_success': 'Success: Connected to Seismic Testnet',
+        'connect_success': 'Success: Connected to Haust Testnet',
         'connect_error': 'Failed to connect to RPC',
         'web3_error': 'Web3 connection failed',
         'pvkey_not_found': 'pvkey.txt file not found',
@@ -340,11 +340,12 @@ async def send_token(w3: Web3, private_key: str, wallet_index: int, contract_add
         amount_wei = int(amount * 10 ** decimals)
 
         balance = w3.from_wei(w3.eth.get_balance(sender_address), 'ether')
-        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} ETH{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} HAUST{Style.RESET_ALL}")
 
         print(f"{Fore.CYAN}  > {LANG[language]['preparing_tx']}{Style.RESET_ALL}")
         nonce = w3.eth.get_transaction_count(sender_address)
-        gas_price = w3.to_wei('0.1', 'gwei')
+        gas_price = w3.eth.gas_price
+        gas_price = int(gas_price * 1.2)
 
         try:
             estimated_gas = contract.functions.sendToken(Web3.to_checksum_address(destination), amount_wei).estimate_gas({
@@ -358,7 +359,7 @@ async def send_token(w3: Web3, private_key: str, wallet_index: int, contract_add
 
         required_balance = w3.from_wei(gas_limit * gas_price, 'ether')
         if balance < required_balance:
-            print(f"{Fore.RED}  ✖ Insufficient balance for gas (Need: {required_balance:.6f} ETH){Style.RESET_ALL}")
+            print(f"{Fore.RED}  ✖ Insufficient balance for gas (Need: {required_balance:.6f} HAUST){Style.RESET_ALL}")
             return False
 
         tx = contract.functions.sendToken(Web3.to_checksum_address(destination), amount_wei).build_transaction({

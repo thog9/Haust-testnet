@@ -12,9 +12,9 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 # Constants
-NETWORK_URLS = ['https://node-2.seismicdev.net/rpc']
-CHAIN_ID = 5124
-EXPLORER_URL = "https://explorer-2.seismicdev.net"
+NETWORK_URLS = ["https://rpc-testnet.haust.app"] 
+CHAIN_ID = 1523903251
+EXPLORER_URL = "https://explorer-testnet.haust.app"
 SOLC_VERSION = "0.8.19"  # Dùng phiên bản không có PUSH0
 
 # Source code của CustomToken.sol
@@ -122,7 +122,7 @@ contract CustomToken {
 # Từ vựng song ngữ
 LANG = {
     'vi': {
-        'title': 'DEPLOY TOKEN ERC20 - SEISMIC TESTNET',
+        'title': 'DEPLOY TOKEN ERC20 - HAUST TESTNET',
         'info': 'Thông tin',
         'found': 'Tìm thấy',
         'wallets': 'ví',
@@ -140,7 +140,7 @@ LANG = {
         'block': 'Khối',
         'error': 'Lỗi',
         'invalid_number': 'Vui lòng nhập số hợp lệ',
-        'connect_success': 'Thành công: Đã kết nối mạng Seismic Testnet',
+        'connect_success': 'Thành công: Đã kết nối mạng Haust Testnet',
         'connect_error': 'Không thể kết nối RPC',
         'web3_error': 'Kết nối Web3 thất bại',
         'pvkey_not_found': 'File pvkey.txt không tồn tại',
@@ -151,11 +151,11 @@ LANG = {
         'completed': 'HOÀN THÀNH: {successful}/{total} GIAO DỊCH THÀNH CÔNG',
         'installing_solc': 'Đang cài đặt solc phiên bản {version}...',
         'solc_installed': 'Đã cài đặt solc phiên bản {version}',
-        'no_balance': 'Số dư ví không đủ (cần ít nhất {required} ETH)',
+        'no_balance': 'Số dư ví không đủ (cần ít nhất {required} HAUST)',
         'estimating_gas': 'Đang ước lượng gas...'
     },
     'en': {
-        'title': 'DEPLOY TOKEN ERC20 - SEISMIC TESTNET',
+        'title': 'DEPLOY ERC20 TOKEN - HAUST TESTNET',
         'info': 'Info',
         'found': 'Found',
         'wallets': 'wallets',
@@ -173,7 +173,7 @@ LANG = {
         'block': 'Block',
         'error': 'Error',
         'invalid_number': 'Please enter a valid number',
-        'connect_success': 'Success: Connected to Seismic Testnet',
+        'connect_success': 'Success: Connected to Haust Testnet',
         'connect_error': 'Failed to connect to RPC',
         'web3_error': 'Web3 connection failed',
         'pvkey_not_found': 'pvkey.txt file not found',
@@ -184,7 +184,7 @@ LANG = {
         'completed': 'COMPLETED: {successful}/{total} TRANSACTIONS SUCCESSFUL',
         'installing_solc': 'Installing solc version {version}...',
         'solc_installed': 'Installed solc version {version}',
-        'no_balance': 'Insufficient balance (need at least {required} ETH)',
+        'no_balance': 'Insufficient balance (need at least {required} HAUST)',
         'estimating_gas': 'Estimating gas...'
     }
 }
@@ -310,7 +310,7 @@ async def deploy_contract(w3: Web3, private_key: str, wallet_index: int, name: s
 
         # Kiểm tra số dư ví
         balance = w3.from_wei(w3.eth.get_balance(sender_address), 'ether')
-        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} ETH{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}  - Số dư hiện tại: {balance:.6f} HAUST{Style.RESET_ALL}")
 
         # Chuẩn bị giao dịch
         print(f"{Fore.CYAN}  > {LANG[language]['preparing_tx']}{Style.RESET_ALL}")
@@ -333,7 +333,8 @@ async def deploy_contract(w3: Web3, private_key: str, wallet_index: int, name: s
             gas_limit = 4000000  # Gas dự phòng
 
         # Kiểm tra số dư đủ cho gas không
-        gas_price = w3.to_wei('0.1', 'gwei')  # Gas price cố định như ethers.js
+        gas_price = w3.eth.gas_price
+        gas_price = int(gas_price * 1.2)
         required_balance = w3.from_wei(gas_limit * gas_price, 'ether')
         if balance < required_balance:
             print(f"{Fore.RED}  ✖ {LANG[language]['no_balance'].format(required=required_balance)}{Style.RESET_ALL}")

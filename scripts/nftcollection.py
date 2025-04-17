@@ -13,9 +13,9 @@ init(autoreset=True)
 BORDER_WIDTH = 80
 
 # Constants
-NETWORK_URLS = ['https://node-2.seismicdev.net/rpc']
-CHAIN_ID = 5124
-EXPLORER_URL = "https://explorer-2.seismicdev.net"
+NETWORK_URLS = ["https://rpc-testnet.haust.app"] 
+CHAIN_ID = 1523903251
+EXPLORER_URL = "https://explorer-testnet.haust.app"
 SOLC_VERSION = "0.8.19"  # Phiên bản Solidity không dùng PUSH0
 
 # NFT Contract Source Code
@@ -101,7 +101,7 @@ contract NFTCollection {
 # Từ vựng song ngữ
 LANG = {
     'vi': {
-        'title': 'QUẢN LÝ NFT - SEISMIC TESTNET',
+        'title': 'QUẢN LÝ NFT - HAUST TESTNET',
         'info': 'Thông tin',
         'found': 'Tìm thấy',
         'wallets': 'ví',
@@ -129,7 +129,7 @@ LANG = {
         'block': 'Khối',
         'error': 'Lỗi',
         'invalid_number': 'Vui lòng nhập số hợp lệ',
-        'connect_success': 'Thành công: Đã kết nối mạng Seismic Testnet',
+        'connect_success': 'Thành công: Đã kết nối mạng Haust Testnet',
         'connect_error': 'Không thể kết nối RPC',
         'web3_error': 'Kết nối Web3 thất bại',
         'pvkey_not_found': 'File pvkey.txt không tồn tại',
@@ -140,11 +140,11 @@ LANG = {
         'completed': 'HOÀN THÀNH: {successful}/{total} GIAO DỊCH THÀNH CÔNG',
         'installing_solc': 'Đang cài đặt solc phiên bản {version}...',
         'solc_installed': 'Đã cài đặt solc phiên bản {version}',
-        'no_balance': 'Số dư ví không đủ (cần ít nhất {required} ETH)',
+        'no_balance': 'Số dư ví không đủ (cần ít nhất {required} HAUST)',
         'estimating_gas': 'Đang ước lượng gas...'
     },
     'en': {
-        'title': 'NFT MANAGEMENT - SEISMIC TESTNET',
+        'title': 'NFT MANAGEMENT - HAUST TESTNET',
         'info': 'Info',
         'found': 'Found',
         'wallets': 'wallets',
@@ -172,7 +172,7 @@ LANG = {
         'block': 'Block',
         'error': 'Error',
         'invalid_number': 'Please enter a valid number',
-        'connect_success': 'Success: Connected to Seismic Testnet',
+        'connect_success': 'Success: Connected to Haust Testnet',
         'connect_error': 'Failed to connect to RPC',
         'web3_error': 'Web3 connection failed',
         'pvkey_not_found': 'pvkey.txt file not found',
@@ -183,7 +183,7 @@ LANG = {
         'completed': 'COMPLETED: {successful}/{total} TRANSACTIONS SUCCESSFUL',
         'installing_solc': 'Installing solc version {version}...',
         'solc_installed': 'Installed solc version {version}',
-        'no_balance': 'Insufficient balance (need at least {required} ETH)',
+        'no_balance': 'Insufficient balance (need at least {required} HAUST)',
         'estimating_gas': 'Estimating gas...'
     }
 }
@@ -307,11 +307,15 @@ async def deploy_nft(w3: Web3, private_key: str, wallet_index: int, name: str, s
         nonce = w3.eth.get_transaction_count(sender_address)
 
         print(f"{Fore.CYAN}  > {LANG[language]['estimating_gas']}{Style.RESET_ALL}")
+        # Fetch dynamic gas price
+        gas_price = int(w3.eth.gas_price * 1.2)
+        print(f"{Fore.YELLOW}  - Current gas price: {w3.from_wei(gas_price, 'gwei'):.2f} Gwei{Style.RESET_ALL}")
+
         tx = contract.constructor(name, symbol, max_supply).build_transaction({
             'from': sender_address,
             'nonce': nonce,
             'chainId': CHAIN_ID,
-            'gasPrice': w3.to_wei('0.1', 'gwei')
+            'gasPrice': gas_price
         })
 
         try:
@@ -361,11 +365,15 @@ async def mint_nft(w3: Web3, private_key: str, wallet_index: int, contract_addre
         print(f"{Fore.CYAN}  > {LANG[language]['preparing_tx']}{Style.RESET_ALL}")
         nonce = w3.eth.get_transaction_count(sender_address)
 
+        # Fetch dynamic gas price
+        gas_price = int(w3.eth.gas_price * 1.2)
+        print(f"{Fore.YELLOW}  - Current gas price: {w3.from_wei(gas_price, 'gwei'):.2f} Gwei{Style.RESET_ALL}")
+
         tx = contract.functions.mint(sender_address, token_id, token_uri).build_transaction({
             'from': sender_address,
             'nonce': nonce,
             'chainId': CHAIN_ID,
-            'gasPrice': w3.to_wei('0.1', 'gwei')
+            'gasPrice': gas_price
         })
 
         print(f"{Fore.CYAN}  > {LANG[language]['estimating_gas']}{Style.RESET_ALL}")
@@ -415,11 +423,15 @@ async def burn_nft(w3: Web3, private_key: str, wallet_index: int, contract_addre
         print(f"{Fore.CYAN}  > {LANG[language]['preparing_tx']}{Style.RESET_ALL}")
         nonce = w3.eth.get_transaction_count(sender_address)
 
+        # Fetch dynamic gas price
+        gas_price = int(w3.eth.gas_price * 1.2)
+        print(f"{Fore.YELLOW}  - Current gas price: {w3.from_wei(gas_price, 'gwei'):.2f} Gwei{Style.RESET_ALL}")
+
         tx = contract.functions.burn(token_id).build_transaction({
             'from': sender_address,
             'nonce': nonce,
             'chainId': CHAIN_ID,
-            'gasPrice': w3.to_wei('0.1', 'gwei')
+            'gasPrice': gas_price
         })
 
         print(f"{Fore.CYAN}  > {LANG[language]['estimating_gas']}{Style.RESET_ALL}")
@@ -486,7 +498,7 @@ async def run_nftcollection(language: str = 'en'):
 
     if choice == '1':  # Deploy
         name = input(f"{Fore.YELLOW}  > {LANG[language]['enter_name']}{Style.RESET_ALL}").strip()
-        symbol = input(f"{Fore.YELLOW}  > {LANG[language]['enter_symbol']}{Style.RESET_ALL}").strip() or "TEA"
+        symbol = input(f"{Fore.YELLOW}  > {LANG[language]['enter_symbol']}{Style.RESET_ALL}").strip() or "HAUST"
         max_supply_input = input(f"{Fore.YELLOW}  > {LANG[language]['enter_max_supply']}{Style.RESET_ALL}").strip()
         try:
             max_supply = int(max_supply_input)
