@@ -72,7 +72,7 @@ async def run_sendtoken(language: str):
     await sendtoken_run(language)
 
 async def run_nftcollection(language: str):
-    from scripts.nftcollection import run as nftcollection_run
+    from scripts.nftcollection import run_nftcollection as nftcollection_run
     await nftcollection_run(language)
 
 async def cmd_exit(language: str):
