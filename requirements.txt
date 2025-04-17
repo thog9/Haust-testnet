@@ -1,5 +1,7 @@
-web3.py
-eth-account
+inquirer
+web3
 colorama
-solcx
-asyncio
+py-solc-x
+eth-account
+aiohttp
+loguru   
